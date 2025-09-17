@@ -35,18 +35,23 @@ class ActorManager:
         cursor.close()
         return Actor(id=actor_id, first_name=first_name, last_name=last_name)
 
-    def all(self):
+    def all(self) -> list[Actor]:
         cursor = self.conn.cursor()
         rows = cursor.execute(f"SELECT * FROM {self.table_name}").fetchall()
         cursor.close()
-        return [Actor(id=row[0], first_name=row[1], last_name=row[2]) for row in rows]
+        return [Actor(id=row[0],
+                      first_name=row[1],
+                      last_name=row[2])
+                for row in rows]
 
     def update(self, pk: int, first_name: str, last_name: str) -> Actor:
         cursor = self.conn.cursor()
-        cursor.execute(f"UPDATE {self.table_name} SET first_name=?, last_name=? WHERE id=?",
+        cursor.execute(f"UPDATE {self.table_name} "
+                       f"SET first_name=?, last_name=? WHERE id=?",
                        (first_name, last_name, pk))
         self.conn.commit()
-        row = cursor.execute(f"SELECT * FROM {self.table_name} WHERE id=?", (pk,)).fetchone()
+        row = cursor.execute(f"SELECT * FROM {self.table_name}"
+                             f" WHERE id=?", (pk,)).fetchone()
         cursor.close()
         if row is None:
             raise Exception(f"Actor with id={pk} not found")
@@ -58,6 +63,6 @@ class ActorManager:
         self.conn.commit()
         cursor.close()
 
-    def close(self):
+    def close(self) -> None:
         if self.conn:
             self.conn.close()
