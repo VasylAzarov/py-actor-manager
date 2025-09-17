@@ -44,11 +44,11 @@ class ActorManager:
                       last_name=row[2])
                 for row in rows]
 
-    def update(self, pk: int, first_name: str, last_name: str) -> Actor:
+    def update(self, pk: int, new_first_name : str, new_last_name: str) -> Actor:
         cursor = self.conn.cursor()
         cursor.execute(f"UPDATE {self.table_name} "
                        f"SET first_name=?, last_name=? WHERE id=?",
-                       (first_name, last_name, pk))
+                       (new_first_name, new_last_name, pk))
         self.conn.commit()
         row = cursor.execute(f"SELECT * FROM {self.table_name}"
                              f" WHERE id=?", (pk,)).fetchone()
